@@ -19,6 +19,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const minPrice = resolvedParams.minPrice ? parseInt(resolvedParams.minPrice as string) : undefined;
   const maxPrice = resolvedParams.maxPrice ? parseInt(resolvedParams.maxPrice as string) : undefined;
   const location = resolvedParams.location as string | undefined;
+  const minRating = resolvedParams.minRating ? parseFloat(resolvedParams.minRating as string) : undefined;
+  const sports = resolvedParams.sports as string | undefined;
+  const amenities = resolvedParams.amenities as string | undefined;
 
   // Try to fetch venues, if DB is empty we should see none or mock 
   let venues: (import('@prisma/client').Venue & { reviews?: { rating: number }[] })[] = [];
@@ -33,9 +36,11 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             ...(maxPrice ? { lte: maxPrice } : {})
           }
         } : {}),
+        ...(sports && { sports: { contains: sports } }),
+        ...(amenities && { facilities: { contains: amenities } }),
         status: { in: ['APPROVED', 'PENDING'] }
       },
-      take: 6,
+      take: 20, // increased take for memory filtering
       orderBy: { createdAt: 'desc' },
       include: {
         reviews: true
@@ -45,12 +50,21 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     console.error("DB not seeded yet", err);
   }
 
+  // Calculate avg rating and filter if minRating is provided
+  if (minRating && venues.length > 0) {
+      venues = venues.filter(v => {
+          if (!v.reviews || v.reviews.length === 0) return false;
+          const avg = v.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / v.reviews.length;
+          return avg >= minRating;
+      });
+  }
+
   // Fallback to mock data if empty (for prototype visual)
   if (venues.length === 0) {
     venues = [
-      { id: '1', name: 'Elite Sports Arena', location: 'New Delhi, Sector 5', price: 1200, category: 'TURF', imageUrl: 'https://picsum.photos/seed/elite/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{rating: 4.8}] as any[] } as any,
-      { id: '2', name: 'Greenfields Cricket Ground', location: 'Mumbai, West End', price: 2500, category: 'CRICKET', imageUrl: 'https://picsum.photos/seed/cricket/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{rating: 4.2}] as any[] } as any,
-      { id: '3', name: 'Neon Football Turf', location: 'Bangalore, Tech Park', price: 1500, category: 'TURF', imageUrl: 'https://picsum.photos/seed/football/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{rating: 5.0}] as any[] } as any,
+      { id: '1', name: 'Elite Sports Arena', location: 'New Delhi, Sector 5', price: 1200, category: 'TURF', imageUrl: 'https://picsum.photos/seed/elite/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, facilities: '{"Parking":true, "Washroom": true}', sports: '["Football", "Cricket"]', reviews: [{rating: 4.8}] as any[] } as any,
+      { id: '2', name: 'Greenfields Cricket Ground', location: 'Mumbai, West End', price: 2500, category: 'CRICKET', imageUrl: 'https://picsum.photos/seed/cricket/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, facilities: '{"Parking":true, "Spectator Area": true}', sports: '["Cricket"]', reviews: [{rating: 4.2}] as any[] } as any,
+      { id: '3', name: 'Neon Football Turf', location: 'Bangalore, Tech Park', price: 1500, category: 'TURF', imageUrl: 'https://picsum.photos/seed/football/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, facilities: '{"Washroom":true, "First Aid": true}', sports: '["Football"]', reviews: [{rating: 5.0}] as any[] } as any,
     ];
     
     // In-memory filter for mock data
@@ -58,6 +72,19 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
     if (location) venues = venues.filter(v => v.location.toLowerCase().includes(location.toLowerCase()));
     if (minPrice) venues = venues.filter(v => v.price >= minPrice);
     if (maxPrice) venues = venues.filter(v => v.price <= maxPrice);
+    if (minRating) {
+        venues = venues.filter(v => {
+            if (!v.reviews || v.reviews.length === 0) return false;
+            const avg = v.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / v.reviews.length;
+            return avg >= minRating;
+        });
+    }
+    if (sports) {
+        venues = venues.filter(v => v.sports?.toLowerCase().includes(sports.toLowerCase()));
+    }
+    if (amenities) {
+        venues = venues.filter(v => v.facilities?.toLowerCase().includes(amenities.toLowerCase()));
+    }
   }
 
   return (

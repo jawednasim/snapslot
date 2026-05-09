@@ -7,6 +7,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { updateProfile } from '@/app/profile/actions';
 
+import { CalendarView } from '@/components/ui/CalendarView';
+
 export function ProfileClient({ 
     user, 
     bookings, 
@@ -124,6 +126,11 @@ export function ProfileClient({
 
                 {activeTab === 'bookings' && (
                     <div className="space-y-8">
+                        <section>
+                            <h2 className="text-xl font-semibold mb-4 text-white">Calendar View</h2>
+                            <CalendarView bookings={bookings} />
+                        </section>
+
                         <section>
                             <h2 className="text-xl font-semibold mb-4 text-white">Upcoming Bookings</h2>
                             {upcomingBookings.length === 0 ? (

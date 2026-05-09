@@ -155,8 +155,8 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
             </section>
         </div>
 
-        {/* Right Col - Rules maybe */}
-        <div className="lg:col-span-1">
+        {/* Right Col - Rules & Policies */}
+        <div className="lg:col-span-1 space-y-6">
             <GlassPane className="p-6">
                 <h3 className="font-display text-xl font-bold mb-4">Venue Rules</h3>
                 <ul className="space-y-3 text-sm text-gray-300">
@@ -164,6 +164,16 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
                     <li className="flex gap-2"><span className="text-blue-400">•</span> Arrive 15 mins before your slot.</li>
                     <li className="flex gap-2"><span className="text-blue-400">•</span> Outside food/drinks not allowed on turf.</li>
                     <li className="flex gap-2"><span className="text-blue-400">•</span> Smoking strictly prohibited.</li>
+                </ul>
+            </GlassPane>
+
+            <GlassPane className="p-6">
+                <h3 className="font-display text-xl font-bold mb-4">Cancellation Policy</h3>
+                <p className="text-sm text-gray-400 mb-3">Please review our cancellation terms before booking:</p>
+                <ul className="space-y-3 text-sm text-gray-300">
+                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong className="text-gray-200">Full Refund:</strong> Cancellations made 24 hours or more before the booked slot.</li>
+                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong className="text-gray-200">50% Refund:</strong> Cancellations made between 12 to 24 hours before the booked slot.</li>
+                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong className="text-gray-200">No Refund:</strong> Cancellations made less than 12 hours before the booked slot.</li>
                 </ul>
             </GlassPane>
         </div>
