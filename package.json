@@ -37,6 +37,7 @@
     "@tailwindcss/postcss": "4.1.11",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "9.39.1",
@@ -49,5 +50,8 @@
   },
   "overrides": {
     "node-domexception": "npm:domexception@^4.0.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }
