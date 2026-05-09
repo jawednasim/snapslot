@@ -332,7 +332,7 @@ export function SlotBookingClient({ venueId, venuePrice }: { venueId: string, ve
                     >
                         <h3 className="font-display text-2xl font-bold mb-6">Confirm Booking</h3>
                         
-                        <div className="space-y-4 mb-8 bg-white/5 p-4 rounded-xl border border-white/10">
+                        <div className="space-y-4 mb-6 bg-white/5 p-4 rounded-xl border border-white/10">
                             <div className="flex justify-between items-center pb-3 border-b border-white/5">
                                 <span className="text-gray-400">Date</span>
                                 <span className="font-medium text-white">{format(selectedDate, 'dd MMM yyyy')}</span>
@@ -345,6 +345,15 @@ export function SlotBookingClient({ venueId, venuePrice }: { venueId: string, ve
                                 <span>Total Price</span>
                                 <span className="text-blue-400">₹{venuePrice + 50}</span>
                             </div>
+                        </div>
+
+                        <div className="text-xs text-gray-400 mb-6 bg-red-500/10 border border-red-500/20 p-3 rounded-lg leading-relaxed">
+                            <strong className="text-red-400 font-bold block mb-1">Cancellation Policy:</strong>
+                            <ul className="list-disc pl-4 space-y-1">
+                                <li>Full refund before 24hrs</li>
+                                <li>50% refund between 12-24hrs</li>
+                                <li>No refund within 12hrs</li>
+                            </ul>
                         </div>
 
                         <div className="flex gap-4">
