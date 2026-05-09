@@ -38,9 +38,8 @@ export function CalendarViewClient({ venueId, initialBookings }: { venueId: stri
         const dayBookings = initialBookings.filter(b => isSameDay(new Date(b.slot.startTime), cloneDay));
         const totalBookings = dayBookings.length;
 
-        // Mock additional bookings for visual effect in prototype
-        const mockTotal = isSameMonth(day, new Date()) && !isSameDay(day, new Date()) && Math.random() > 0.5 ? Math.floor(Math.random() * 5) + 1 : totalBookings;
-        const total = totalBookings > 0 ? totalBookings : mockTotal;
+        // Keep it realistic without mock randomness to pass purity rules
+        const total = totalBookings;
 
         days.push(
             <div

@@ -202,7 +202,7 @@ export function ProfileClient({
                         </h2>
                         {favorites.length === 0 ? (
                             <GlassPane className="p-8 text-center text-gray-400 border-dashed">
-                                You haven't saved any venues yet.
+                                You haven&apos;t saved any venues yet.
                             </GlassPane>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
