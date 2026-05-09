@@ -37,7 +37,7 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
               createdAt: new Date(),
               updatedAt: new Date(),
               rejectionReason: null,
-              reviews: [{rating: 4.8}, {rating: 5}] as any[]
+              reviews: [{id: "r1", rating: 4.8}, {id: "r2", rating: 5}] as any[]
           } as any
       } else {
         notFound();
