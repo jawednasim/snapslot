@@ -3,7 +3,7 @@ import { GlassPane } from '@/components/ui/GlassPane';
 import { SlotBookingClient } from '@/components/ui/SlotBookingClient';
 import { prisma } from '@/lib/prisma';
 import Image from 'next/image';
-import { MapPin, Star, Users, Wind, ShieldCheck, Car } from 'lucide-react';
+import { MapPin, Star, Users, Wind, ShieldCheck, Car, CalendarCheck } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -155,7 +155,7 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
             </section>
         </div>
 
-        {/* Right Col - Rules & Policies */}
+        {/* Right Col - Rules maybe */}
         <div className="lg:col-span-1 space-y-6">
             <GlassPane className="p-6">
                 <h3 className="font-display text-xl font-bold mb-4">Venue Rules</h3>
@@ -167,13 +167,12 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
                 </ul>
             </GlassPane>
 
-            <GlassPane className="p-6">
-                <h3 className="font-display text-xl font-bold mb-4">Cancellation Policy</h3>
-                <p className="text-sm text-gray-400 mb-3">Please review our cancellation terms before booking:</p>
+            <GlassPane className="p-6 border-orange-500/20 bg-orange-500/5">
+                <h3 className="font-display text-xl font-bold mb-4 text-orange-400">Cancellation Policy</h3>
                 <ul className="space-y-3 text-sm text-gray-300">
-                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong className="text-gray-200">Full Refund:</strong> Cancellations made 24 hours or more before the booked slot.</li>
-                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong className="text-gray-200">50% Refund:</strong> Cancellations made between 12 to 24 hours before the booked slot.</li>
-                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong className="text-gray-200">No Refund:</strong> Cancellations made less than 12 hours before the booked slot.</li>
+                    <li className="flex gap-2"><span className="text-orange-400">1.</span> Free cancellation up to 24 hours before the booked slot time.</li>
+                    <li className="flex gap-2"><span className="text-orange-400">2.</span> 50% refund for cancellations made between 12 to 24 hours prior.</li>
+                    <li className="flex gap-2"><span className="text-orange-400">3.</span> No refund for cancellations within 12 hours of the booking.</li>
                 </ul>
             </GlassPane>
         </div>
@@ -181,7 +180,12 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
 
       {/* Booking Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-16 font-sans" id="booking-section">
-        <h2 className="font-display text-3xl font-bold mb-8">Book a Slot</h2>
+        <div className="flex items-center justify-between mb-8">
+            <h2 className="font-display text-3xl font-bold">Book a Slot</h2>
+            <a href={`/venue/${safeVenue.id}/calendar`} className="flex items-center justify-center px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-sm font-medium transition-colors">
+                <CalendarCheck className="w-4 h-4 mr-2" /> View Full Calendar
+            </a>
+        </div>
         <SlotBookingClient venueId={safeVenue.id} venuePrice={safeVenue.price} />
       </div>
 

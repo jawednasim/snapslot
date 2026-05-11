@@ -7,8 +7,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { updateProfile } from '@/app/profile/actions';
 
-import { CalendarView } from '@/components/ui/CalendarView';
-
 export function ProfileClient({ 
     user, 
     bookings, 
@@ -127,11 +125,6 @@ export function ProfileClient({
                 {activeTab === 'bookings' && (
                     <div className="space-y-8">
                         <section>
-                            <h2 className="text-xl font-semibold mb-4 text-white">Calendar View</h2>
-                            <CalendarView bookings={bookings} />
-                        </section>
-
-                        <section>
                             <h2 className="text-xl font-semibold mb-4 text-white">Upcoming Bookings</h2>
                             {upcomingBookings.length === 0 ? (
                                 <GlassPane className="p-8 text-center text-gray-400 border-dashed">
@@ -183,7 +176,7 @@ export function ProfileClient({
                                                 <Link href={`/venue/${booking.venueId}`}>{booking.venue.name}</Link>
                                             </h3>
                                             <span className="text-sm text-gray-500 mt-1">
-                                                {new Date(booking.slot.startTime).toLocaleDateString()} • {new Date(booking.slot.startTime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - {new Date(booking.slot.endTime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} • ₹{booking.total}
+                                                {new Date(booking.slot.startTime).toLocaleDateString()} • ₹{booking.total}
                                             </span>
                                         </div>
                                     </GlassPane>
@@ -202,7 +195,7 @@ export function ProfileClient({
                         </h2>
                         {favorites.length === 0 ? (
                             <GlassPane className="p-8 text-center text-gray-400 border-dashed">
-                                You haven't saved any venues yet.
+                                You haven&apos;t saved any venues yet.
                             </GlassPane>
                         ) : (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

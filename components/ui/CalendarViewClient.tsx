@@ -39,7 +39,7 @@ export function CalendarViewClient({ venueId, initialBookings }: { venueId: stri
         const totalBookings = dayBookings.length;
 
         // Mock additional bookings for visual effect in prototype
-        const mockTotal = isSameMonth(day, new Date()) && !isSameDay(day, new Date()) && Math.random() > 0.5 ? Math.floor(Math.random() * 5) + 1 : totalBookings;
+        const mockTotal = isSameMonth(day, new Date()) && !isSameDay(day, new Date()) && (day.getDate() % 3 === 0) ? (day.getDate() % 5) + 1 : totalBookings;
         const total = totalBookings > 0 ? totalBookings : mockTotal;
 
         days.push(
