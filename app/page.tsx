@@ -19,9 +19,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const minPrice = resolvedParams.minPrice ? parseInt(resolvedParams.minPrice as string) : undefined;
   const maxPrice = resolvedParams.maxPrice ? parseInt(resolvedParams.maxPrice as string) : undefined;
   const location = resolvedParams.location as string | undefined;
-  const minRating = resolvedParams.minRating ? parseFloat(resolvedParams.minRating as string) : undefined;
-  const sport = resolvedParams.sport as string | undefined;
-  const facility = resolvedParams.facility as string | undefined;
 
   // Try to fetch venues, if DB is empty we should see none or mock 
   let venues: (import('@prisma/client').Venue & { reviews?: { rating: number }[] })[] = [];
@@ -36,8 +33,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             ...(maxPrice ? { lte: maxPrice } : {})
           }
         } : {}),
-        ...(sport && { sports: { contains: sport } }),
-        ...(facility && { facilities: { contains: facility } }),
         status: { in: ['APPROVED', 'PENDING'] }
       },
       take: 6,
@@ -46,14 +41,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         reviews: true
       }
     });
-
-    if (minRating) {
-        venues = venues.filter(v => {
-            if (!v.reviews || v.reviews.length === 0) return false;
-            const avg = v.reviews.reduce((acc, r) => acc + r.rating, 0) / v.reviews.length;
-            return avg >= minRating;
-        });
-    }
   } catch (err) {
     console.error("DB not seeded yet", err);
   }
@@ -61,9 +48,9 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   // Fallback to mock data if empty (for prototype visual)
   if (venues.length === 0) {
     venues = [
-      { id: '1', name: 'Elite Sports Arena', location: 'New Delhi, Sector 5', price: 1200, category: 'TURF', imageUrl: 'https://picsum.photos/seed/elite/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{id: 'r1', rating: 4.8}] as any[] } as any,
-      { id: '2', name: 'Greenfields Cricket Ground', location: 'Mumbai, West End', price: 2500, category: 'CRICKET', imageUrl: 'https://picsum.photos/seed/cricket/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{id: 'r2', rating: 4.2}] as any[] } as any,
-      { id: '3', name: 'Neon Football Turf', location: 'Bangalore, Tech Park', price: 1500, category: 'TURF', imageUrl: 'https://picsum.photos/seed/football/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{id: 'r3', rating: 5.0}] as any[] } as any,
+      { id: '1', name: 'Elite Sports Arena', location: 'New Delhi, Sector 5', price: 1200, category: 'TURF', imageUrl: 'https://picsum.photos/seed/elite/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{rating: 4.8}] as any[] } as any,
+      { id: '2', name: 'Greenfields Cricket Ground', location: 'Mumbai, West End', price: 2500, category: 'CRICKET', imageUrl: 'https://picsum.photos/seed/cricket/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{rating: 4.2}] as any[] } as any,
+      { id: '3', name: 'Neon Football Turf', location: 'Bangalore, Tech Park', price: 1500, category: 'TURF', imageUrl: 'https://picsum.photos/seed/football/800/600', description: '', status: 'APPROVED', ownerId: '1', createdAt: new Date(), updatedAt: new Date(), rejectionReason: null, reviews: [{rating: 5.0}] as any[] } as any,
     ];
     
     // In-memory filter for mock data

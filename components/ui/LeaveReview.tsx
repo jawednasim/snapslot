@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Star } from 'lucide-react';
 import { GlassPane } from './GlassPane';
+import { useSession } from 'next-auth/react';
 
 export function LeaveReview({ venueId }: { venueId: string }) {
   const [rating, setRating] = useState(0);
@@ -10,9 +11,11 @@ export function LeaveReview({ venueId }: { venueId: string }) {
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const { data: session } = useSession();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!session) return alert("Please login to leave a review");
     if (rating === 0) return alert("Please select a rating");
 
     setIsSubmitting(true);
@@ -20,7 +23,7 @@ export function LeaveReview({ venueId }: { venueId: string }) {
       const res = await fetch('/api/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ venueId, rating, comment, userId: '1' }) // Mock userId 1
+        body: JSON.stringify({ venueId, rating, comment })
       });
 
       if (res.ok) {

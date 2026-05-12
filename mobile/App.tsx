@@ -14,7 +14,7 @@ const venues = [
 function HomeScreen({ navigation }: any) {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>TurfOS</Text>
+      <Text style={styles.title}>SnapSlot</Text>
       <FlatList
         data={venues}
         keyExtractor={item => item.id}

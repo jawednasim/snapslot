@@ -55,28 +55,6 @@ export async function POST(req: NextRequest) {
                 data: { status: 'BOOKED', isLocked: false }
             });
 
-            // Send booking confirmation email
-            const fullBooking = await prisma.booking.findUnique({
-                where: { id: bookingId },
-                include: { user: true, venue: true, slot: true }
-            });
-
-            if (fullBooking?.user?.email) {
-                const { sendBookingConfirmation } = await import('@/lib/mail');
-                await sendBookingConfirmation(
-                    fullBooking.user.email,
-                    {
-                        userName: fullBooking.user.name || 'User',
-                        venueName: fullBooking.venue.name,
-                        location: fullBooking.venue.location,
-                        date: new Date(fullBooking.slot.startTime).toLocaleDateString(),
-                        time: `${new Date(fullBooking.slot.startTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${new Date(fullBooking.slot.endTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
-                        amount: fullBooking.total,
-                        bookingId: fullBooking.id
-                    }
-                );
-            }
-
             return NextResponse.json({ success: true, message: 'Payment verified successfully' });
         } else {
             // Failed signature validation

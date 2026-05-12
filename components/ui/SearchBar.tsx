@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, MapPin } from 'lucide-react';
+import { Search, MapPin, Settings2, X, Star as StarIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Venue } from '@prisma/client';
 import { GlassPane } from './GlassPane';
@@ -17,11 +17,23 @@ export function SearchBar({ onExpandChange }: { onExpandChange?: (expanded: bool
   const [filterCategory, setFilterCategory] = useState('');
   const [filterMaxPrice, setFilterMaxPrice] = useState<number | ''>('');
   const [filterMinRating, setFilterMinRating] = useState<number | ''>('');
-  const [filterSport, setFilterSport] = useState('');
-  const [filterAmenity, setFilterAmenity] = useState('');
+  const [filterSports, setFilterSports] = useState<string[]>([]);
+  const [filterAmenities, setFilterAmenities] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const SPORTS_LIST = ['Football', 'Cricket', 'Badminton', 'Tennis', 'Snooker', 'Table Tennis'];
+  const AMENITIES_LIST = ['Parking', 'Washroom', 'Changing Room', 'Locker', 'Water', 'CCTV'];
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const toggleSport = (sport: string) => {
+    setFilterSports(prev => prev.includes(sport) ? prev.filter(s => s !== sport) : [...prev, sport]);
+  };
+
+  const toggleAmenity = (amenity: string) => {
+    setFilterAmenities(prev => prev.includes(amenity) ? prev.filter(a => a !== amenity) : [...prev, amenity]);
+  };
 
   const filteredResults = results.filter(v => {
       // Basic Filters
@@ -37,21 +49,25 @@ export function SearchBar({ onExpandChange }: { onExpandChange?: (expanded: bool
           if (reviews.length > 0) {
               avgRating = reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / reviews.length;
           }
-          if (avgRating < ratingNum && avgRating !== 0) return false; // avg <= 0 maybe exclude if rating is required? Just exclude if strict < 
-          if (avgRating === 0 && ratingNum > 0) return false; // No rating means rating is 0, so if they want min 1, it's out.
+          if (avgRating < ratingNum && avgRating !== 0) return false;
+          if (avgRating === 0 && ratingNum > 0) return false;
       }
 
-      // Sports Supported
-      if (filterSport && v.sports) {
+      // Sports Supported (Match any if selected)
+      if (filterSports.length > 0) {
+          if (!v.sports) return false;
           const vSports = v.sports.toLowerCase();
-          if (!vSports.includes(filterSport.toLowerCase())) return false;
-      } else if (filterSport && !v.sports) return false;
+          const matches = filterSports.some(s => vSports.includes(s.toLowerCase()));
+          if (!matches) return false;
+      }
 
-      // Amenities
-      if (filterAmenity && v.facilities) {
+      // Amenities (Match all if selected)
+      if (filterAmenities.length > 0) {
+          if (!v.facilities) return false;
           const vFacs = v.facilities.toLowerCase();
-          if (!vFacs.includes(filterAmenity.toLowerCase())) return false;
-      } else if (filterAmenity && !v.facilities) return false;
+          const matches = filterAmenities.every(a => vFacs.includes(a.toLowerCase()));
+          if (!matches) return false;
+      }
 
       return true;
   });
@@ -129,62 +145,93 @@ export function SearchBar({ onExpandChange }: { onExpandChange?: (expanded: bool
       {isOpen && (results.length > 0 || query) && (
         <div className="absolute top-full mt-2 w-full z-50">
           <GlassPane className="py-2 flex flex-col max-h-96 overflow-hidden">
-            <div className="px-3 pb-2 border-b border-white/10 mb-2 flex flex-col gap-2">
-                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider pl-1">Filters</div>
+            <div className="px-3 pb-3 border-b border-white/10 mb-2 flex flex-col gap-3">
+                <div className="flex items-center justify-between pl-1">
+                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
+                        <Settings2 className="w-3 h-3 text-blue-500" />
+                        Refine Search
+                    </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-2">
-                    <input 
-                        type="text" 
-                        placeholder="Location" 
-                        value={filterLocation}
-                        onChange={e => setFilterLocation(e.target.value)}
-                        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
-                    />
+                    <div className="relative">
+                        <MapPin className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500" />
+                        <input 
+                            type="text" 
+                            placeholder="Location" 
+                            value={filterLocation}
+                            onChange={e => setFilterLocation(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg pl-7 pr-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500/50"
+                        />
+                    </div>
                     <select 
                         value={filterCategory} 
                         onChange={e => setFilterCategory(e.target.value)}
-                        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 [&>option]:text-black"
+                        className="bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500/50 [&>option]:text-black"
                     >
                         <option value="">All Categories</option>
-                        <option value="Turf">Turf</option>
-                        <option value="Court">Court</option>
-                        <option value="Field">Field</option>
-                        <option value="Studio">Studio</option>
+                        <option value="TURF">Turf</option>
+                        <option value="CRICKET">Cricket</option>
+                        <option value="FOOTBALL">Football</option>
+                        <option value="BADMINTON">Badminton</option>
+                        <option value="EVENTS">Events</option>
+                        <option value="SNOOKER">Snooker</option>
                     </select>
                 </div>
+
                 <div className="grid grid-cols-2 gap-2">
                     <input 
                         type="number" 
-                        placeholder="Max Price" 
+                        placeholder="Max Price (₹)" 
                         value={filterMaxPrice}
                         onChange={e => setFilterMaxPrice(e.target.value ? Number(e.target.value) : '')}
-                        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                        className="bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500/50"
                     />
-                    <select 
-                        value={filterMinRating} 
-                        onChange={e => setFilterMinRating(e.target.value ? Number(e.target.value) : '')}
-                        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 [&>option]:text-black"
-                    >
-                        <option value="">Any Rating</option>
-                        <option value="4">4+ Stars</option>
-                        <option value="3">3+ Stars</option>
-                        <option value="2">2+ Stars</option>
-                    </select>
+                    <div className="relative">
+                        <StarIcon className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-yellow-500" />
+                        <select 
+                            value={filterMinRating} 
+                            onChange={e => setFilterMinRating(e.target.value ? Number(e.target.value) : '')}
+                            className="w-full bg-white/5 border border-white/10 rounded-lg pl-7 pr-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500/50 [&>option]:text-black"
+                        >
+                            <option value="">Any Rating</option>
+                            <option value="4">4+ Stars</option>
+                            <option value="3">3+ Stars</option>
+                            <option value="2">2+ Stars</option>
+                        </select>
+                    </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                    <input 
-                        type="text" 
-                        placeholder="Sport (e.g. Football)" 
-                        value={filterSport}
-                        onChange={e => setFilterSport(e.target.value)}
-                        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
-                    />
-                    <input 
-                        type="text" 
-                        placeholder="Amenity (e.g. Parking)" 
-                        value={filterAmenity}
-                        onChange={e => setFilterAmenity(e.target.value)}
-                        className="bg-white/5 border border-white/10 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
-                    />
+
+                {/* Sports Pills */}
+                <div>
+                   <p className="text-[9px] font-bold text-gray-500 uppercase mb-1.5 ml-1">Sports Supported</p>
+                   <div className="flex flex-wrap gap-1.5">
+                       {SPORTS_LIST.map(sport => (
+                           <button 
+                                key={sport}
+                                onClick={() => toggleSport(sport)}
+                                className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${filterSports.includes(sport) ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                           >
+                               {sport}
+                           </button>
+                       ))}
+                   </div>
+                </div>
+
+                {/* Amenities Pills */}
+                <div>
+                   <p className="text-[9px] font-bold text-gray-500 uppercase mb-1.5 ml-1">Amenities</p>
+                   <div className="flex flex-wrap gap-1.5">
+                       {AMENITIES_LIST.map(amenity => (
+                           <button 
+                                key={amenity}
+                                onClick={() => toggleAmenity(amenity)}
+                                className={`px-2 py-1 rounded-md text-[10px] font-medium transition-all ${filterAmenities.includes(amenity) ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                           >
+                               {amenity}
+                           </button>
+                       ))}
+                   </div>
                 </div>
             </div>
 

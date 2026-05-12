@@ -347,10 +347,6 @@ export function SlotBookingClient({ venueId, venuePrice }: { venueId: string, ve
                             </div>
                         </div>
 
-                        <div className="mb-6 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg text-sm text-orange-200">
-                            <strong>Cancellation Policy:</strong> Free cancellation up to 24 hours before the slot. 50% refund between 24-12 hours. No refund within 12 hours of the booking.
-                        </div>
-
                         <div className="flex gap-4">
                             <button 
                                 onClick={() => setShowConfirmModal(false)}

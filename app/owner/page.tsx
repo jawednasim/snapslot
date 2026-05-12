@@ -60,40 +60,85 @@ export default async function OwnerDashboard() {
                 </div>
 
                 {/* KPI Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    <GlassPane className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+                    <GlassPane className="p-5 border-l-4 border-l-blue-500">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                                <CreditCard className="w-6 h-6 text-blue-400" />
+                            <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                                <CreditCard className="w-5 h-5 text-blue-400" />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Revenue</p>
-                                <h3 className="text-2xl font-bold font-display">₹{totalRevenue}</h3>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Revenue</p>
+                                <h3 className="text-xl font-bold font-display">₹{totalRevenue.toLocaleString()}</h3>
                             </div>
                         </div>
                     </GlassPane>
-                    <GlassPane className="p-6">
+                    <GlassPane className="p-5 border-l-4 border-l-indigo-500">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
-                                <TrendingUp className="w-6 h-6 text-indigo-400" />
+                            <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
+                                <TrendingUp className="w-5 h-5 text-indigo-400" />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Total Bookings</p>
-                                <h3 className="text-2xl font-bold font-display">{totalBookings}</h3>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Bookings</p>
+                                <h3 className="text-xl font-bold font-display">{totalBookings}</h3>
                             </div>
                         </div>
                     </GlassPane>
-                    <GlassPane className="p-6">
+                    <GlassPane className="p-5 border-l-4 border-l-purple-500">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center shrink-0">
-                                <Calendar className="w-6 h-6 text-purple-400" />
+                            <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center shrink-0">
+                                <Calendar className="w-5 h-5 text-purple-400" />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-medium">Upcoming Reservations</p>
-                                <h3 className="text-2xl font-bold font-display">{upcomingReservations}</h3>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Upcoming</p>
+                                <h3 className="text-xl font-bold font-display">{upcomingReservations}</h3>
                             </div>
                         </div>
                     </GlassPane>
+                    <GlassPane className="p-5 border-l-4 border-l-green-500">
+                        <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center shrink-0">
+                                <List className="w-5 h-5 text-green-400" />
+                            </div>
+                            <div>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Listings</p>
+                                <h3 className="text-xl font-bold font-display">{venues.length}</h3>
+                            </div>
+                        </div>
+                    </GlassPane>
+                </div>
+
+                {/* Quick Links / Actions */}
+                <div className="mb-10">
+                    <h2 className="font-display text-lg font-bold mb-4 flex items-center gap-2">
+                        <Settings className="w-4 h-4 text-blue-500" />
+                        Quick Management
+                    </h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        <Link href="/owner/bookings" className="bg-white/5 border border-white/10 hover:bg-white/10 p-4 rounded-2xl transition-all group flex flex-col items-center text-center">
+                            <Calendar className="w-6 h-6 mb-2 text-blue-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-semibold">All Bookings</span>
+                        </Link>
+                        <Link href="/owner/pricing" className="bg-white/5 border border-white/10 hover:bg-white/10 p-4 rounded-2xl transition-all group flex flex-col items-center text-center">
+                            <CreditCard className="w-6 h-6 mb-2 text-indigo-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-semibold">Pricing Plans</span>
+                        </Link>
+                        <Link href="/owner/slots" className="bg-white/5 border border-white/10 hover:bg-white/10 p-4 rounded-2xl transition-all group flex flex-col items-center text-center">
+                            <List className="w-6 h-6 mb-2 text-purple-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-semibold">Slot Manager</span>
+                        </Link>
+                        <Link href="/owner/reviews" className="bg-white/5 border border-white/10 hover:bg-white/10 p-4 rounded-2xl transition-all group flex flex-col items-center text-center">
+                            <Edit3 className="w-6 h-6 mb-2 text-green-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-semibold">User Reviews</span>
+                        </Link>
+                        <Link href="/owner/analytics" className="bg-white/5 border border-white/10 hover:bg-white/10 p-4 rounded-2xl transition-all group flex flex-col items-center text-center">
+                            <TrendingUp className="w-6 h-6 mb-2 text-yellow-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-semibold">Analytics</span>
+                        </Link>
+                        <Link href="/owner/profile" className="bg-white/5 border border-white/10 hover:bg-white/10 p-4 rounded-2xl transition-all group flex flex-col items-center text-center">
+                            <Settings className="w-6 h-6 mb-2 text-gray-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-semibold">Settings</span>
+                        </Link>
+                    </div>
                 </div>
                 
                 <h2 className="font-display text-2xl font-bold mb-6">My Venues</h2>
