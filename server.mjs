@@ -21,6 +21,8 @@ app.prepare().then(() => {
     }
   });
 
+  const activeLocks = new Map();
+
   io.on('connection', (socket) => {
     console.log('A client connected:', socket.id);
 
@@ -35,15 +37,40 @@ app.prepare().then(() => {
 
     // Handle slot locking (optimistic locking)
     socket.on('lockSlot', ({ venueId, slotId, userId }) => {
+      const lockKey = `${venueId}_${slotId}`;
+      
+      // Clear existing timeout if any
+      if (activeLocks.has(lockKey)) {
+        clearTimeout(activeLocks.get(lockKey).timeoutId);
+      }
+
+      // Auto-unlock after 5 mins (300000 ms)
+      const timeoutId = setTimeout(() => {
+         io.to(`venue_${venueId}`).emit('slotUnlocked', { slotId });
+         activeLocks.delete(lockKey);
+      }, 300000);
+
+      activeLocks.set(lockKey, { userId, timeoutId });
+
       // Broadcast to others in the venue room that it's temporarily locked
       socket.to(`venue_${venueId}`).emit('slotLocked', { slotId, userId });
     });
 
     socket.on('unlockSlot', ({ venueId, slotId }) => {
+      const lockKey = `${venueId}_${slotId}`;
+      if (activeLocks.has(lockKey)) {
+        clearTimeout(activeLocks.get(lockKey).timeoutId);
+        activeLocks.delete(lockKey);
+      }
       socket.to(`venue_${venueId}`).emit('slotUnlocked', { slotId });
     });
 
     socket.on('bookSlot', ({ venueId, slotId, bookingData }) => {
+      const lockKey = `${venueId}_${slotId}`;
+      if (activeLocks.has(lockKey)) {
+        clearTimeout(activeLocks.get(lockKey).timeoutId);
+        activeLocks.delete(lockKey);
+      }
       // In reality, you'd save this to Prisma first, then emit
       io.to(`venue_${venueId}`).emit('slotBooked', { slotId, bookingData });
     });

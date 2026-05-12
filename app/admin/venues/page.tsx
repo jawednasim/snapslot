@@ -1,19 +1,12 @@
-import { prisma } from '@/lib/prisma';
-import { GlassPane } from '@/components/ui/GlassPane';
-import { VenueTable } from './VenueTable';
+import { AdminVenues } from "@/components/AdminVenues"
 
-export const dynamic = 'force-dynamic';
-
-export default async function AdminVenuesPage() {
-    const venues = await prisma.venue.findMany({
-        include: { owner: true },
-        orderBy: { createdAt: 'desc' }
-    });
-
-    return (
-        <GlassPane className="p-6">
-            <h2 className="font-display font-bold text-xl mb-6">Venue Management</h2>
-            <VenueTable venues={venues} />
-        </GlassPane>
-    );
+export default function AdminVenuesPage() {
+  return (
+    <div className="min-h-screen bg-gray-100 p-8">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-3xl font-bold mb-6">Venue Approvals</h1>
+        <AdminVenues />
+      </div>
+    </div>
+  )
 }

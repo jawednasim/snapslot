@@ -1,141 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
-}
-
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  role      String   @default("USER") // USER, OWNER, ADMIN
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  venues       Venue[]
-  bookings     Booking[]
-  reviews      Review[]
-  ownerProfile OwnerProfile?
-  favorites    Favorite[]
-}
-
-model OwnerProfile {
-  id             String   @id @default(cuid())
-  userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id])
-  phone          String?
-  alternatePhone String?
-  bankHolderName String?
-  accountNumber  String?
-  ifscCode       String?
-  upiId          String?
-  businessLicenseUrl String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-}
-
-model Venue {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  location    String
-  city        String?
-  state       String?
-  pincode     String?
-  lat         Float?
-  lng         Float?
-  price       Float
-  category    String   // TURF, HALL, LODGE
-  imageUrl    String?
-  gallery     String?  // JSON serialized array of strings
-  status      String   @default("PENDING") // PENDING, APPROVED, REJECTED
-  rejectionReason String?
-  
-  // Venue Configuration
-  size        String?  // 5v5, 7v7, 11v11
-  surface     String?  // Artificial Grass, Natural Grass, Indoor
-  sports      String?  // JSON representation of supported sports
-  facilities  String?  // JSON representation of facilities
-  
-  // Operating Hours
-  openTime    String?  @default("06:00")
-  closeTime   String?  @default("23:00")
-  
-  ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  slots       Slot[]
-  bookings    Booking[]
-  reviews     Review[]
-  favorites   Favorite[]
-}
-
-model Slot {
-  id        String   @id @default(cuid())
-  venueId   String
-  venue     Venue    @relation(fields: [venueId], references: [id])
-  startTime DateTime
-  endTime   DateTime
-  isLocked  Boolean  @default(false)
-  lockedAt  DateTime? // To handle lock expiry
-  status    String   @default("AVAILABLE") // AVAILABLE, BOOKED
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  bookings  Booking[]
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Booking {
   id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
   venueId   String
-  venue     Venue    @relation(fields: [venueId], references: [id])
-  slotId    String
-  slot      Slot     @relation(fields: [slotId], references: [id])
-  status    String   @default("PENDING") // PENDING, CONFIRMED, CANCELLED
-  total     Float
+  userId    String     // Stores the Firebase auth user ID
+  date      DateTime
+  timeSlot  String
+  status    String     @default("PENDING") // PENDING, CONFIRMED, CANCELLED
+  amount    Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  payment   Payment?
-}
-
-model Payment {
-  id          String   @id @default(cuid())
-  bookingId   String   @unique
-  booking     Booking  @relation(fields: [bookingId], references: [id])
-  razorpayId  String?
-  status      String   @default("PENDING") // PENDING, SUCCESS, FAILED
-  amount      Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Review {
-  id        String   @id @default(cuid())
-  rating    Int
-  comment   String?
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  venueId   String
-  venue     Venue    @relation(fields: [venueId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Favorite {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  venueId   String
-  venue     Venue    @relation(fields: [venueId], references: [id])
-  createdAt DateTime @default(now())
-
-  @@unique([userId, venueId])
 }

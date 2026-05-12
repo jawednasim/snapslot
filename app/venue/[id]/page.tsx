@@ -156,7 +156,7 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Right Col - Rules maybe */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-6">
             <GlassPane className="p-6">
                 <h3 className="font-display text-xl font-bold mb-4">Venue Rules</h3>
                 <ul className="space-y-3 text-sm text-gray-300">
@@ -164,6 +164,17 @@ export default async function VenueDetail({ params }: { params: Promise<{ id: st
                     <li className="flex gap-2"><span className="text-blue-400">•</span> Arrive 15 mins before your slot.</li>
                     <li className="flex gap-2"><span className="text-blue-400">•</span> Outside food/drinks not allowed on turf.</li>
                     <li className="flex gap-2"><span className="text-blue-400">•</span> Smoking strictly prohibited.</li>
+                </ul>
+            </GlassPane>
+
+            <GlassPane className="p-6 bg-red-500/5 border-red-500/20">
+                <h3 className="font-display text-xl font-bold mb-4 text-red-400 flex items-center gap-2">
+                    Cancellation Policy
+                </h3>
+                <ul className="space-y-3 text-sm text-gray-300">
+                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong>Free Cancellation:</strong> Up to 24 hours before the slot time.</li>
+                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong>50% Refund:</strong> Between 12 to 24 hours before the slot time.</li>
+                    <li className="flex gap-2"><span className="text-red-400">•</span> <strong>No Refund:</strong> Cancellations made less than 12 hours before the slot time will not be refunded.</li>
                 </ul>
             </GlassPane>
         </div>

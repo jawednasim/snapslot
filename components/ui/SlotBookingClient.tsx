@@ -173,10 +173,24 @@ export function SlotBookingClient({ venueId, venuePrice }: { venueId: string, ve
               rzp1.open();
           } else {
               // Fallback if Razorpay script is not loaded
-              setTimeout(() => {
-                  socket?.emit('bookSlot', { venueId, slotId: selectedSlot, bookingData: { userId } });
-                  setSelectedSlot(null);
-                  alert('Booking Confirmed! (Simulated payment since Razorpay SDK is unavailable)');
+              setTimeout(async () => {
+                  const verifyRes = await fetch('/api/razorpay/verify', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                          razorpay_order_id: data.order.id,
+                          razorpay_payment_id: `mock_payment_${Date.now()}`,
+                          razorpay_signature: 'mock_signature',
+                          bookingId: data.bookingId
+                      })
+                  });
+                  const verifyData = await verifyRes.json();
+                  if (verifyData.success) {
+                      socket?.emit('bookSlot', { venueId, slotId: selectedSlot, bookingData: { userId } });
+                      setSelectedSlot(null);
+                      alert('Booking Confirmed! (Simulated payment since Razorpay SDK is unavailable)');
+                  } else {
+                      alert('Mock Payment Verification Failed!');
+                  }
               }, 1000);
           }
       } catch (e) {
@@ -332,7 +346,7 @@ export function SlotBookingClient({ venueId, venuePrice }: { venueId: string, ve
                     >
                         <h3 className="font-display text-2xl font-bold mb-6">Confirm Booking</h3>
                         
-                        <div className="space-y-4 mb-8 bg-white/5 p-4 rounded-xl border border-white/10">
+                        <div className="space-y-4 mb-6 bg-white/5 p-4 rounded-xl border border-white/10">
                             <div className="flex justify-between items-center pb-3 border-b border-white/5">
                                 <span className="text-gray-400">Date</span>
                                 <span className="font-medium text-white">{format(selectedDate, 'dd MMM yyyy')}</span>
@@ -345,6 +359,15 @@ export function SlotBookingClient({ venueId, venuePrice }: { venueId: string, ve
                                 <span>Total Price</span>
                                 <span className="text-blue-400">₹{venuePrice + 50}</span>
                             </div>
+                        </div>
+
+                        <div className="mb-6 p-4 rounded-xl border border-red-500/20 bg-red-500/10">
+                            <h4 className="text-sm font-bold text-red-400 mb-2">Cancellation Policy</h4>
+                            <p className="text-xs text-gray-300">
+                                <strong>Free cancellation</strong> until 24 hours before slot time. 
+                                Cancellations within 12-24 hours incur a 50% fee. 
+                                No refunds for cancellations within 12 hours.
+                            </p>
                         </div>
 
                         <div className="flex gap-4">

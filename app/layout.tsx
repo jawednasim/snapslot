@@ -1,31 +1,24 @@
-import type { Metadata } from 'next';
-import { Inter, Outfit } from 'next/font/google';
-import './globals.css';
-import Script from 'next/script';
-import { NextAuthProvider } from '@/components/NextAuthProvider';
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import './globals.css'
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-const outfit = Outfit({ subsets: ['latin'], variable: '--font-display' });
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'SnapSlot - Premium Venue Booking',
-  description: 'Book turf grounds, halls, and events seamlessly.',
-};
+  title: 'Snapslot App',
+  description: 'Manage Venues',
+}
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${outfit.variable} dark`}>
-      <body className="bg-[#0B0F1A] text-white font-sans antialiased selection:bg-blue-500/30" suppressHydrationWarning>
-        <NextAuthProvider>
-            <div className="fixed inset-0 z-[-1] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/20 via-[#0B0F1A] to-[#0B0F1A]"></div>
-            {children}
-            <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
-        </NextAuthProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        {children}
       </body>
     </html>
-  );
+  )
 }

@@ -9,7 +9,8 @@ export function AdminNav() {
         { href: '/admin', label: 'Overview' },
         { href: '/admin/users', label: 'Users' },
         { href: '/admin/venues', label: 'Venues' },
-        { href: '/admin/bookings', label: 'Bookings' }
+        { href: '/admin/bookings', label: 'Bookings' },
+        { href: '/admin/calendar', label: 'Calendar' }
     ];
 
     return (

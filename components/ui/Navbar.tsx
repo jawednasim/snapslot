@@ -95,6 +95,9 @@ export function Navbar() {
                   <Heart className="w-4 h-4 md:w-5 md:h-5 text-gray-300" />
                 </Link>
                 <Link href="/bookings" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors shrink-0">
+                  <CalendarDays className="w-4 h-4 md:w-5 md:h-5" />
+                </Link>
+                <Link href="/profile" className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors shrink-0">
                   <User className="w-4 h-4 md:w-5 md:h-5" />
                 </Link>
                 <button onClick={() => signOut()} className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors shrink-0">
